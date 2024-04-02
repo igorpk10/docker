@@ -1,0 +1,45 @@
+# Version from code version on docker compose
+# This isn't have any relation with containers
+# For more information check https://docs.docker.com/compose/
+version: '3.9'
+
+# Define the volume will be used for shared information
+volumes:
+  mysql_data: {}
+
+services:
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # The container can restart always will be necessary, like errors or when identify any problem
+    restart: always
+    # Define variables for service, normally you pickup in docker-hub page
+    # In this example https://hub.docker.com/_/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: wordpress
+        MYSQL_USER: wordpress
+        MYSQL_PASSWORD: wordpress
+  
+  wordpress:
+    # Define the dependency, so this container will be run after the dependency
+    depends_on:
+      - mysql
+    image: wordpress:latest
+    ports:
+      # Expose the host port and container port
+      - "80:80"
+    restart: always
+    environment:
+        WORDPREDD_DB_HOST: mysql:3306
+        WORDPRESS_DB_USER: wordpress
+        WORDPRESS_DB_PASSWORD: wordpress
+        WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./wordpress:/var/www/html
+
+
+    
+
+      
